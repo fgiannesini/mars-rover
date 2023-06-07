@@ -1,6 +1,6 @@
 import { Direction } from "./enums/direction";
 import { Command } from "./enums/command";
-import { rover, execute, Rover } from "./mars-rover";
+import { rover, mars, execute, Rover } from "./mars-rover";
 
 const { North, West, South, East } = Direction;
 const { Left, Right, Forward, Backward } = Command;
@@ -20,14 +20,74 @@ describe("Rover", () => {
     });
 });
 
+describe("Mars", () => {
+    it("should return a initial state for Mars", () => {
+        // Given
+        const initMars = mars({ rows: 4, cols: 4 });
+
+        // When
+        // Then
+        expect(initMars).toEqual({ rows: 4, cols: 4 });
+    });
+    it("should wrap around the edge for columns", () => {
+        // Given
+        const initMars = mars({ rows: 5, cols: 5 });
+        const initialRover = rover(2, 2, East);
+        const commands: Command[] = [Forward, Forward, Forward];
+
+        // When
+        const newRoverState = execute(initMars, initialRover, commands);
+
+        // Then
+        expect(newRoverState).toEqual({ x: 0, y: 2, direction: East });
+    });
+    it("should wrap around the edge when going columns 2", () => {
+        // Given
+        const initMars = mars({ rows: 5, cols: 5 });
+        const initialRover = rover(0, 1, East);
+        const commands: Command[] = [Backward];
+
+        // When
+        const newRoverState = execute(initMars, initialRover, commands);
+
+        // Then
+        expect(newRoverState).toEqual({ x: 4, y: 1, direction: East });
+    });
+    it("should wrap around the edge when going rows", () => {
+        // Given
+        const initMars = mars({ rows: 6, cols: 6 });
+        const initialRover = rover(1, 5, North);
+        const commands: Command[] = [Forward];
+
+        // When
+        const newRoverState = execute(initMars, initialRover, commands);
+
+        // Then
+        expect(newRoverState).toEqual({ x: 1, y: 0, direction: North });
+    });
+    it("should wrap around the edge when going rows 2", () => {
+        // Given
+        const initMars = mars({ rows: 6, cols: 6 });
+        const initialRover = rover(2, 0, North);
+        const commands: Command[] = [Backward];
+
+        // When
+        const newRoverState = execute(initMars, initialRover, commands);
+
+        // Then
+        expect(newRoverState).toEqual({ x: 2, y: 5, direction: North });
+    });
+});
+
 describe("Commands", () => {
     it("should rotate left", () => {
         // Given
+        const initMars = mars({ rows: 5, cols: 5 });
         const initialState = rover(2, 2, East);
         const commands: Command[] = [Left];
 
         // When
-        const newRoverState = execute(initialState, commands);
+        const newRoverState = execute(initMars, initialState, commands);
 
         // Then
         expect(newRoverState).toEqual({
@@ -39,11 +99,12 @@ describe("Commands", () => {
 
     it("should rotate right", () => {
         // Given
+        const initMars = mars({ rows: 5, cols: 5 });
         const initialState = rover(1, 1, North);
         const commands: Command[] = [Right];
 
         // When
-        const newRoverState = execute(initialState, commands);
+        const newRoverState = execute(initMars, initialState, commands);
 
         // Then
         expect(newRoverState).toEqual({
@@ -55,11 +116,12 @@ describe("Commands", () => {
 
     it("should move forward", () => {
         // Given
+        const initMars = mars({ rows: 5, cols: 5 });
         const initialState = rover(2, 2, East);
         const commands: Command[] = [Forward];
 
         // When
-        const newRoverState = execute(initialState, commands);
+        const newRoverState = execute(initMars, initialState, commands);
 
         // Then
         expect(newRoverState).toEqual({
@@ -71,11 +133,12 @@ describe("Commands", () => {
 
     it("should move backward", () => {
         // Given
+        const initMars = mars({ rows: 5, cols: 5 });
         const initialState = rover(2, 2, East);
         const commands: Command[] = [Backward];
 
         // When
-        const newRoverState = execute(initialState, commands);
+        const newRoverState = execute(initMars, initialState, commands);
 
         // Then
         expect(newRoverState).toEqual({
@@ -87,11 +150,12 @@ describe("Commands", () => {
 
     it("should take an array of commands", () => {
         // Given
+        const initMars = mars({ rows: 5, cols: 5 });
         const initialState = rover(2, 2, East);
         const commands: Command[] = [Forward, Forward, Left, Backward];
 
         // When
-        const newRoverState = execute(initialState, commands);
+        const newRoverState = execute(initMars, initialState, commands);
 
         // Then
         expect(newRoverState).toEqual({
@@ -124,10 +188,11 @@ describe("Move Rover", () => {
         "Should return a rover with new state when rover go forward",
         (initialState: Rover, expectedState: Rover) => {
             // Given
+            const initMars = mars({ rows: 5, cols: 5 });
             const commands: Command[] = [Forward];
 
             //When
-            const newRoverState = execute(initialState, commands);
+            const newRoverState = execute(initMars, initialState, commands);
             //Then
             expect(newRoverState).toEqual(expectedState);
         },
@@ -154,10 +219,11 @@ describe("Move Rover", () => {
         "Should return a rover with new state when rover go backward",
         (initialState: Rover, expectedState: Rover) => {
             // Given
+            const initMars = mars({ rows: 5, cols: 5 });
             const commands: Command[] = [Backward];
 
             //When
-            const newRoverState = execute(initialState, commands);
+            const newRoverState = execute(initMars, initialState, commands);
             //Then
             expect(newRoverState).toEqual(expectedState);
         },
@@ -184,10 +250,11 @@ describe("Move Rover", () => {
         "Should return a rover with new state when rover rotate left",
         (initialState: Rover, expectedState: Rover) => {
             // Given
+            const initMars = mars({ rows: 5, cols: 5 });
             const commands: Command[] = [Left];
 
             //When
-            const newRoverState = execute(initialState, commands);
+            const newRoverState = execute(initMars, initialState, commands);
             //Then
             expect(newRoverState).toEqual(expectedState);
         },
@@ -214,10 +281,11 @@ describe("Move Rover", () => {
         "Should return a rover with new state when rover rotate right",
         (initialState: Rover, expectedState: Rover) => {
             // Given
+            const initMars = mars({ rows: 5, cols: 5 });
             const commands: Command[] = [Right];
 
             //When
-            const newRoverState = execute(initialState, commands);
+            const newRoverState = execute(initMars, initialState, commands);
             //Then
             expect(newRoverState).toEqual(expectedState);
         },
