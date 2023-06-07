@@ -1,6 +1,7 @@
 import { Direction } from "./enums/direction";
 import { Command } from "./enums/command";
-import { rover, mars, execute, Rover } from "./mars-rover";
+import { rover, mars, execute } from "./mars-rover";
+import { Rover } from "./types/rover";
 
 const { North, West, South, East } = Direction;
 const { Left, Right, Forward, Backward } = Command;
@@ -110,7 +111,7 @@ describe("Mars", () => {
         // Then
         expect(initMars).toEqual({ rows: 4, cols: 4 });
     });
-    it("should wrap around the edge for columns", () => {
+    it("should wrap around the edge when going to the right", () => {
         // Given
         const initMars = mars({ rows: 5, cols: 5 });
         const initialRover = rover(2, 2, East);
@@ -125,7 +126,7 @@ describe("Mars", () => {
             direction: East,
         });
     });
-    it("should wrap around the edge when going columns 2", () => {
+    it("should wrap around the edge when going to the left", () => {
         // Given
         const initMars = mars({ rows: 5, cols: 5 });
         const initialRover = rover(0, 1, East);
@@ -140,7 +141,7 @@ describe("Mars", () => {
             direction: East,
         });
     });
-    it("should wrap around the edge when going rows", () => {
+    it("should wrap around the edge when going to hight", () => {
         // Given
         const initMars = mars({ rows: 6, cols: 6 });
         const initialRover = rover(1, 5, North);
@@ -155,7 +156,7 @@ describe("Mars", () => {
             direction: North,
         });
     });
-    it("should wrap around the edge when going rows 2", () => {
+    it("should wrap around the edge when going too low", () => {
         // Given
         const initMars = mars({ rows: 6, cols: 6 });
         const initialRover = rover(2, 0, North);
@@ -170,25 +171,6 @@ describe("Mars", () => {
             direction: North,
         });
     });
-    it("should have obstacle", () => {
-        // Given
-        const initMars = mars({ rows: 6, cols: 6 });
-        const initialRover = rover(2, 0, North);
-        const commands: Command[] = [Backward];
-
-        // When
-        const newRoverState = execute(initMars, initialRover, commands);
-
-        // Then
-        expect(newRoverState).toEqual({
-            position: { x: 2, y: 5 },
-            direction: North,
-        });
-    });
-});
-
-describe("Obstacle detection", () => {
-    it("Should ", () => {});
 });
 
 describe("Move Rover", () => {

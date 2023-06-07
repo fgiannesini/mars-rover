@@ -1,9 +1,9 @@
 import { Command } from "./enums/command";
 import { Direction } from "./enums/direction";
-
-type Position = { x: number; y: number };
-export type Rover = { position: Position; direction: Direction };
-export type Mars = { rows: number; cols: number };
+import { RotateLeft } from "./records/rotateLeft";
+import { RotateRight } from "./records/rotateRight";
+import { Mars } from "./types/mars";
+import { Rover } from "./types/rover";
 
 const { North, West, South, East } = Direction;
 const { Left, Right, Forward, Backward } = Command;
@@ -38,7 +38,7 @@ export const execute = (
         }
     }
 
-    return adjustRoverPosition(rover, mars);
+    return handleEdges(rover, mars);
 };
 
 const moveForward = ({ position, direction }: Rover): Rover => {
@@ -93,38 +93,24 @@ const rotateRight = (roverDirection: Direction): Direction => {
     return RotateRight[roverDirection];
 };
 
-const adjustRoverPosition = (
-    { position, direction }: Rover,
-    mars: Mars,
-): Rover => {
+const handleEdges = ({ position, direction }: Rover, mars: Mars): Rover => {
     let adjustPosition = position;
 
     if (adjustPosition.x >= mars.rows) {
         adjustPosition.x = 0;
     }
+
     if (adjustPosition.x < 0) {
         adjustPosition.x = mars.rows - 1;
     }
+
     if (adjustPosition.y >= mars.cols) {
         adjustPosition.y = 0;
     }
+
     if (adjustPosition.y < 0) {
         adjustPosition.y = mars.cols - 1;
     }
 
     return rover(adjustPosition.x, adjustPosition.y, direction);
-};
-
-const RotateLeft: Record<string, Direction> = {
-    N: West,
-    W: South,
-    S: East,
-    E: North,
-};
-
-const RotateRight: Record<string, Direction> = {
-    N: East,
-    E: South,
-    S: West,
-    W: North,
 };
