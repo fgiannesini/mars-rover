@@ -1,14 +1,15 @@
 import { Command } from "./enums/command";
 import { Direction } from "./enums/direction";
 
-export type Rover = { x: number; y: number; direction: Direction };
+type Position = { x: number; y: number };
+export type Rover = { position: Position; direction: Direction };
 export type Mars = { rows: number; cols: number };
 
 const { North, West, South, East } = Direction;
 const { Left, Right, Forward, Backward } = Command;
 
 export const rover = (x: number, y: number, direction: Direction): Rover => {
-    return { x, y, direction };
+    return { position: { x, y }, direction };
 };
 
 export const mars = ({ rows, cols }: Mars) => {
@@ -40,48 +41,48 @@ export const execute = (
     return adjustRoverPosition(rover, mars);
 };
 
-const moveForward = (currentRover: Rover): Rover => {
-    let posX = currentRover.x;
-    let posY = currentRover.y;
+const moveForward = ({ position, direction }: Rover): Rover => {
+    let posX = position.x;
+    let posY = position.y;
 
-    switch (currentRover.direction) {
+    switch (direction) {
         case North:
-            posY = currentRover.y + 1;
+            posY = position.y + 1;
             break;
         case South:
-            posY = currentRover.y - 1;
+            posY = position.y - 1;
             break;
         case West:
-            posX = currentRover.x - 1;
+            posX = position.x - 1;
             break;
         case East:
-            posX = currentRover.x + 1;
+            posX = position.x + 1;
             break;
     }
 
-    return rover(posX, posY, currentRover.direction);
+    return rover(posX, posY, direction);
 };
 
-const moveBackward = (currentRover: Rover) => {
-    let posX = currentRover.x;
-    let posY = currentRover.y;
+const moveBackward = ({ position, direction }: Rover) => {
+    let posX = position.x;
+    let posY = position.y;
 
-    switch (currentRover.direction) {
+    switch (direction) {
         case North:
-            posY = currentRover.y -= 1;
+            posY = position.y -= 1;
             break;
         case South:
-            posY = currentRover.y += 1;
+            posY = position.y += 1;
             break;
         case West:
-            posX = currentRover.x += 1;
+            posX = position.x += 1;
             break;
         case East:
-            posX = currentRover.x -= 1;
+            posX = position.x -= 1;
             break;
     }
 
-    return rover(posX, posY, currentRover.direction);
+    return rover(posX, posY, direction);
 };
 
 const rotateLeft = (roverDirection: Direction) => {
@@ -92,23 +93,26 @@ const rotateRight = (roverDirection: Direction): Direction => {
     return RotateRight[roverDirection];
 };
 
-const adjustRoverPosition = (rover: Rover, mars: Mars): Rover => {
-    let position = rover;
+const adjustRoverPosition = (
+    { position, direction }: Rover,
+    mars: Mars,
+): Rover => {
+    let adjustPosition = position;
 
-    if (position.x >= mars.rows) {
-        position.x = 0;
+    if (adjustPosition.x >= mars.rows) {
+        adjustPosition.x = 0;
     }
-    if (position.x < 0) {
-        position.x = mars.rows - 1;
+    if (adjustPosition.x < 0) {
+        adjustPosition.x = mars.rows - 1;
     }
-    if (position.y >= mars.cols) {
-        position.y = 0;
+    if (adjustPosition.y >= mars.cols) {
+        adjustPosition.y = 0;
     }
-    if (position.y < 0) {
-        position.y = mars.cols - 1;
+    if (adjustPosition.y < 0) {
+        adjustPosition.y = mars.cols - 1;
     }
 
-    return position;
+    return rover(adjustPosition.x, adjustPosition.y, direction);
 };
 
 const RotateLeft: Record<string, Direction> = {

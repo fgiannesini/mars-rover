@@ -13,8 +13,89 @@ describe("Rover", () => {
         // When
         // Then
         expect(initialState).toEqual({
-            x: 1,
-            y: 1,
+            position: { x: 1, y: 1 },
+            direction: North,
+        });
+    });
+});
+
+describe("Commands", () => {
+    it("should rotate left", () => {
+        // Given
+        const initMars = mars({ rows: 5, cols: 5 });
+        const initialState = rover(2, 2, East);
+        const commands: Command[] = [Left];
+
+        // When
+        const newRoverState = execute(initMars, initialState, commands);
+
+        // Then
+        expect(newRoverState).toEqual({
+            position: { x: 2, y: 2 },
+            direction: North,
+        });
+    });
+
+    it("should rotate right", () => {
+        // Given
+        const initMars = mars({ rows: 5, cols: 5 });
+        const initialState = rover(1, 1, North);
+        const commands: Command[] = [Right];
+
+        // When
+        const newRoverState = execute(initMars, initialState, commands);
+
+        // Then
+        expect(newRoverState).toEqual({
+            position: { x: 1, y: 1 },
+            direction: East,
+        });
+    });
+
+    it("should move forward", () => {
+        // Given
+        const initMars = mars({ rows: 5, cols: 5 });
+        const initialState = rover(2, 2, East);
+        const commands: Command[] = [Forward];
+
+        // When
+        const newRoverState = execute(initMars, initialState, commands);
+
+        // Then
+        expect(newRoverState).toEqual({
+            position: { x: 3, y: 2 },
+            direction: East,
+        });
+    });
+
+    it("should move backward", () => {
+        // Given
+        const initMars = mars({ rows: 5, cols: 5 });
+        const initialState = rover(2, 2, East);
+        const commands: Command[] = [Backward];
+
+        // When
+        const newRoverState = execute(initMars, initialState, commands);
+
+        // Then
+        expect(newRoverState).toEqual({
+            position: { x: 1, y: 2 },
+            direction: East,
+        });
+    });
+
+    it("should take an array of commands", () => {
+        // Given
+        const initMars = mars({ rows: 5, cols: 5 });
+        const initialState = rover(2, 2, East);
+        const commands: Command[] = [Forward, Forward, Left, Backward];
+
+        // When
+        const newRoverState = execute(initMars, initialState, commands);
+
+        // Then
+        expect(newRoverState).toEqual({
+            position: { x: 4, y: 1 },
             direction: North,
         });
     });
@@ -39,7 +120,10 @@ describe("Mars", () => {
         const newRoverState = execute(initMars, initialRover, commands);
 
         // Then
-        expect(newRoverState).toEqual({ x: 0, y: 2, direction: East });
+        expect(newRoverState).toEqual({
+            position: { x: 0, y: 2 },
+            direction: East,
+        });
     });
     it("should wrap around the edge when going columns 2", () => {
         // Given
@@ -51,7 +135,10 @@ describe("Mars", () => {
         const newRoverState = execute(initMars, initialRover, commands);
 
         // Then
-        expect(newRoverState).toEqual({ x: 4, y: 1, direction: East });
+        expect(newRoverState).toEqual({
+            position: { x: 4, y: 1 },
+            direction: East,
+        });
     });
     it("should wrap around the edge when going rows", () => {
         // Given
@@ -63,7 +150,10 @@ describe("Mars", () => {
         const newRoverState = execute(initMars, initialRover, commands);
 
         // Then
-        expect(newRoverState).toEqual({ x: 1, y: 0, direction: North });
+        expect(newRoverState).toEqual({
+            position: { x: 1, y: 0 },
+            direction: North,
+        });
     });
     it("should wrap around the edge when going rows 2", () => {
         // Given
@@ -75,114 +165,49 @@ describe("Mars", () => {
         const newRoverState = execute(initMars, initialRover, commands);
 
         // Then
-        expect(newRoverState).toEqual({ x: 2, y: 5, direction: North });
-    });
-});
-
-describe("Commands", () => {
-    it("should rotate left", () => {
-        // Given
-        const initMars = mars({ rows: 5, cols: 5 });
-        const initialState = rover(2, 2, East);
-        const commands: Command[] = [Left];
-
-        // When
-        const newRoverState = execute(initMars, initialState, commands);
-
-        // Then
         expect(newRoverState).toEqual({
-            x: 2,
-            y: 2,
+            position: { x: 2, y: 5 },
             direction: North,
         });
     });
-
-    it("should rotate right", () => {
+    it("should have obstacle", () => {
         // Given
-        const initMars = mars({ rows: 5, cols: 5 });
-        const initialState = rover(1, 1, North);
-        const commands: Command[] = [Right];
-
-        // When
-        const newRoverState = execute(initMars, initialState, commands);
-
-        // Then
-        expect(newRoverState).toEqual({
-            x: 1,
-            y: 1,
-            direction: East,
-        });
-    });
-
-    it("should move forward", () => {
-        // Given
-        const initMars = mars({ rows: 5, cols: 5 });
-        const initialState = rover(2, 2, East);
-        const commands: Command[] = [Forward];
-
-        // When
-        const newRoverState = execute(initMars, initialState, commands);
-
-        // Then
-        expect(newRoverState).toEqual({
-            x: 3,
-            y: 2,
-            direction: East,
-        });
-    });
-
-    it("should move backward", () => {
-        // Given
-        const initMars = mars({ rows: 5, cols: 5 });
-        const initialState = rover(2, 2, East);
+        const initMars = mars({ rows: 6, cols: 6 });
+        const initialRover = rover(2, 0, North);
         const commands: Command[] = [Backward];
 
         // When
-        const newRoverState = execute(initMars, initialState, commands);
+        const newRoverState = execute(initMars, initialRover, commands);
 
         // Then
         expect(newRoverState).toEqual({
-            x: 1,
-            y: 2,
-            direction: East,
-        });
-    });
-
-    it("should take an array of commands", () => {
-        // Given
-        const initMars = mars({ rows: 5, cols: 5 });
-        const initialState = rover(2, 2, East);
-        const commands: Command[] = [Forward, Forward, Left, Backward];
-
-        // When
-        const newRoverState = execute(initMars, initialState, commands);
-
-        // Then
-        expect(newRoverState).toEqual({
-            x: 4,
-            y: 1,
+            position: { x: 2, y: 5 },
             direction: North,
         });
     });
+});
+
+describe("Obstacle detection", () => {
+    it("Should ", () => {});
 });
 
 describe("Move Rover", () => {
     it.each([
         [
-            { x: 1, y: 1, direction: North },
-            { x: 1, y: 2, direction: North },
+            { position: { x: 1, y: 1 }, direction: North },
+            { position: { x: 1, y: 2 }, direction: North },
         ],
         [
-            { x: 1, y: 1, direction: South },
-            { x: 1, y: 0, direction: South },
+            { position: { x: 1, y: 1 }, direction: South },
+            { position: { x: 1, y: 0 }, direction: South },
         ],
         [
-            { x: 1, y: 1, direction: West },
-            { x: 0, y: 1, direction: West },
+            { position: { x: 1, y: 1 }, direction: West },
+            { position: { x: 0, y: 1 }, direction: West },
         ],
         [
-            { x: 1, y: 1, direction: East },
-            { x: 2, y: 1, direction: East },
+            { position: { x: 1, y: 1 }, direction: East },
+            { position: { x: 2, y: 1 }, direction: East },
         ],
     ])(
         "Should return a rover with new state when rover go forward",
@@ -200,20 +225,20 @@ describe("Move Rover", () => {
 
     it.each([
         [
-            { x: 2, y: 2, direction: North },
-            { x: 2, y: 1, direction: North },
+            { position: { x: 2, y: 2 }, direction: North },
+            { position: { x: 2, y: 1 }, direction: North },
         ],
         [
-            { x: 2, y: 2, direction: South },
-            { x: 2, y: 3, direction: South },
+            { position: { x: 2, y: 2 }, direction: South },
+            { position: { x: 2, y: 3 }, direction: South },
         ],
         [
-            { x: 2, y: 2, direction: West },
-            { x: 3, y: 2, direction: West },
+            { position: { x: 2, y: 2 }, direction: West },
+            { position: { x: 3, y: 2 }, direction: West },
         ],
         [
-            { x: 2, y: 2, direction: East },
-            { x: 1, y: 2, direction: East },
+            { position: { x: 2, y: 2 }, direction: East },
+            { position: { x: 1, y: 2 }, direction: East },
         ],
     ])(
         "Should return a rover with new state when rover go backward",
@@ -231,20 +256,20 @@ describe("Move Rover", () => {
 
     it.each([
         [
-            { x: 2, y: 2, direction: North },
-            { x: 2, y: 2, direction: West },
+            { position: { x: 2, y: 2 }, direction: North },
+            { position: { x: 2, y: 2 }, direction: West },
         ],
         [
-            { x: 2, y: 2, direction: South },
-            { x: 2, y: 2, direction: East },
+            { position: { x: 2, y: 2 }, direction: South },
+            { position: { x: 2, y: 2 }, direction: East },
         ],
         [
-            { x: 2, y: 2, direction: West },
-            { x: 2, y: 2, direction: South },
+            { position: { x: 2, y: 2 }, direction: West },
+            { position: { x: 2, y: 2 }, direction: South },
         ],
         [
-            { x: 2, y: 2, direction: East },
-            { x: 2, y: 2, direction: North },
+            { position: { x: 2, y: 2 }, direction: East },
+            { position: { x: 2, y: 2 }, direction: North },
         ],
     ])(
         "Should return a rover with new state when rover rotate left",
@@ -262,20 +287,20 @@ describe("Move Rover", () => {
 
     it.each([
         [
-            { x: 2, y: 2, direction: North },
-            { x: 2, y: 2, direction: East },
+            { position: { x: 2, y: 2 }, direction: North },
+            { position: { x: 2, y: 2 }, direction: East },
         ],
         [
-            { x: 2, y: 2, direction: South },
-            { x: 2, y: 2, direction: West },
+            { position: { x: 2, y: 2 }, direction: South },
+            { position: { x: 2, y: 2 }, direction: West },
         ],
         [
-            { x: 2, y: 2, direction: West },
-            { x: 2, y: 2, direction: North },
+            { position: { x: 2, y: 2 }, direction: West },
+            { position: { x: 2, y: 2 }, direction: North },
         ],
         [
-            { x: 2, y: 2, direction: East },
-            { x: 2, y: 2, direction: South },
+            { position: { x: 2, y: 2 }, direction: East },
+            { position: { x: 2, y: 2 }, direction: South },
         ],
     ])(
         "Should return a rover with new state when rover rotate right",
